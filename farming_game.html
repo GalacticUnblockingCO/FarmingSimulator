@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Farming Game</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        text-align: center;
+    }
+    .plot {
+        display: inline-block;
+        width: 100px;
+        height: 100px;
+        background-color: #cfc;
+        border: 2px solid #000;
+        margin: 10px;
+        cursor: pointer;
+    }
+</style>
+</head>
+<body>
+    <h1>Farming Game</h1>
+    <p>Click on the plot to plant seeds:</p>
+    <div id="farm">
+        <div class="plot" onclick="plantSeed(1)"></div>
+        <div class="plot" onclick="plantSeed(2)"></div>
+        <div class="plot" onclick="plantSeed(3)"></div>
+    </div>
+    <p>Coins: <span id="coins">0</span></p>
+    <button onclick="harvestCrops()">Harvest Crops</button>
+    <button onclick="buyPlot()">Buy Plot (Cost: 10 coins)</button>
+
+    <script>
+        let coins = 0;
+        let plots = [false, false, false]; // Array to track planted plots, false means empty
+
+        function plantSeed(plotIndex) {
+            if (!plots[plotIndex - 1]) {
+                plots[plotIndex - 1] = true;
+                document.getElementById(`plot${plotIndex}`).style.backgroundColor = '#0f0'; // Change color to green indicating planted
+            }
+        }
+
+        function harvestCrops() {
+            let cropsHarvested = 0;
+            plots.forEach((plot, index) => {
+                if (plot) {
+                    coins += Math.ceil(Math.random() * 10); // Random coin gain for each harvested plot
+                    cropsHarvested++;
+                    plots[index] = false; // Reset plot
+                    document.getElementById(`plot${index + 1}`).style.backgroundColor = '#cfc'; // Change color back to default
+                }
+            });
+            document.getElementById('coins').textContent = coins;
+            alert(`You harvested ${cropsHarvested} crops and earned ${cropsHarvested * 10} coins!`);
+        }
+
+        function buyPlot() {
+            const plotCost = 10; // Cost to buy a new plot
+            if (coins >= plotCost) {
+                coins -= plotCost;
+                plots.push(false); // Add new plot to the end of the array
+                document.getElementById('coins').textContent = coins;
+                const newPlot = document.createElement('div');
+                newPlot.className = 'plot';
+                newPlot.id = `plot${plots.length}`;
+                newPlot.onclick = () => plantSeed(plots.length);
+                document.getElementById('farm').appendChild(newPlot);
+                alert('New plot bought!');
+            } else {
+                alert("Not enough coins to buy a new plot!");
+            }
+        }
+    </script>
+</body>
+</html>
